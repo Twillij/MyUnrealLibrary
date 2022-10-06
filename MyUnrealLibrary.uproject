@@ -1,0 +1,22 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{A52E415C-4BF5-CC22-9FF3-8AAE84B4A012}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "MyUnrealLibrary",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		}
+	]
+}
