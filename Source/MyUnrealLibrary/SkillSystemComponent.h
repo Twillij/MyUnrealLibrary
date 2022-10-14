@@ -14,11 +14,11 @@ class MYUNREALLIBRARY_API USkillSystemComponent : public UAbilitySystemComponent
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<USkill>> UnlockableSkillClasses;
-
 	UPROPERTY(BlueprintAssignable)
 	FOnSkillStateUpdated OnSkillEnabled;
+
+public:
+	
 
 protected:
 	virtual void BeginPlay() override;

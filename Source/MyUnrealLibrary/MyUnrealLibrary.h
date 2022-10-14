@@ -12,3 +12,24 @@ enum class EQuestState : uint8
 	Failed,
 	Completed,
 };
+
+//USTRUCT(BlueprintType)
+//struct FCharacterData
+//{
+//	GENERATED_BODY()
+//
+//public:
+//	FName CharacterID;
+//	TArray<FSkillData> SkillSetData;
+//};
+//
+//USTRUCT(BlueprintType)
+//struct FSkillData
+//{
+//	GENERATED_BODY()
+//
+//public:
+//	FName SkillID = EName::None;
+//	bool bUnlocked = false;
+//	bool bEnabled = false;
+//};

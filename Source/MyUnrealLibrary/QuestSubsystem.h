@@ -15,7 +15,6 @@ class MYUNREALLIBRARY_API UQuestSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnQuestUpdated OnQuestUpdated;
 
