@@ -1,4 +1,5 @@
 #include "Skill.h"
+#include "../Character/PlayableCharacter.h"
 
 void USkill::SetSkillUnlocked(bool bUnlocked)
 {
@@ -19,11 +20,4 @@ void USkill::SetSkillEnabled(bool bEnabled)
 	// To do: call on skill enabled or something
 
 	bSkillEnabled = bEnabled;
-}
-
-bool USkill::CanCharacterUnlockSkill_Implementation(ACharacter* Character)
-{
-	// To do: check if can pay unlock cost
-
-	return false;
 }

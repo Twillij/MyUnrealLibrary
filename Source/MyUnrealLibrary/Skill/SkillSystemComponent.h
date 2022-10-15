@@ -14,6 +14,9 @@ class MYUNREALLIBRARY_API USkillSystemComponent : public UAbilitySystemComponent
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<USkill>> SkillSet;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnSkillStateUpdated OnSkillEnabled;
 

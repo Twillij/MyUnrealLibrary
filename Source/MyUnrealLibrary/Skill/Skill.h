@@ -4,6 +4,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "Skill.generated.h"
 
+class APlayableCharacter;
 class USkillSystemComponent;
 
 UCLASS()
@@ -39,9 +40,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkillEnabled(bool bEnabled);
-
-	UFUNCTION(BlueprintNativeEvent)
-	bool CanCharacterUnlockSkill(ACharacter* Character);
 
 	// To do: OnSkillEnabled... BP Event, BP Native, or Delegate?
 };

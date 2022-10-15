@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DataObject.h"
-#include "MyUnrealLibrary.h"
+#include "../DataObject.h"
+#include "../MyUnrealLibrary.h"
 #include "Quest.generated.h"
 
 UCLASS()

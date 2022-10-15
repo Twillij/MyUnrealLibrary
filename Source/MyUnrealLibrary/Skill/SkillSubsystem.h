@@ -6,15 +6,6 @@
 
 class USkill;
 
-USTRUCT(BlueprintType)
-struct FSkillSetData
-{
-	GENERATED_BODY()
-
-public:
-
-};
-
 UCLASS()
 class MYUNREALLIBRARY_API USkillSubsystem : public UGameInstanceSubsystem
 {

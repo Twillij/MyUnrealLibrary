@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "MyUnrealLibrary.h"
+#include "../MyUnrealLibrary.h"
 #include "QuestSubsystem.generated.h"
 
 class UQuest;

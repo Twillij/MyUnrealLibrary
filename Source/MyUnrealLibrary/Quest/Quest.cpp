@@ -1,6 +1,6 @@
 #include "Quest.h"
-#include "MyFunctionLibrary.h"
 #include "QuestSubsystem.h"
+#include "../MyFunctionLibrary.h"
 
 void UQuest::SetQuestState(EQuestState NewState)
 {
