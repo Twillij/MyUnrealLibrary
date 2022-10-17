@@ -14,7 +14,7 @@ public:
 	virtual UWorld* GetWorld() const override;
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, DisplayName = "BeginPlay")
 	void BP_BeginPlay();
 
 	virtual void PostInitProperties() override;

@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayAbilitySpec.h"
 #include "MyCharacter.generated.h"
 
 class UCharacterAttributeSet;
@@ -28,4 +29,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Abilities")
 	UCharacterAttributeSet* GetCharacterAttributeSet() { return CharacterAttributeSet; }
+	
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	virtual void GainAbility(TSubclassOf<UGameplayAbility> Ability, int AbilityLevel);
 };

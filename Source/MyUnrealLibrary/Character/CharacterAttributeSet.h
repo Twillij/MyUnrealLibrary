@@ -18,6 +18,10 @@ class MYUNREALLIBRARY_API UCharacterAttributeSet : public UAttributeSet
 	
 public:
 	UPROPERTY(BlueprintReadOnly)
+	FGameplayAttributeData Level;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Level);
+
+	UPROPERTY(BlueprintReadOnly)
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Health);
 

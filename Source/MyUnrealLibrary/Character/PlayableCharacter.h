@@ -4,6 +4,7 @@
 #include "MyCharacter.h"
 #include "PlayableCharacter.generated.h"
 
+class USkill;
 class USkillSystemComponent;
 
 UCLASS()
@@ -14,6 +15,10 @@ class MYUNREALLIBRARY_API APlayableCharacter : public AMyCharacter
 public:
 	APlayableCharacter();
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Skills")
 	USkillSystemComponent* SkillSystemComponent;
+
+public:
+	UFUNCTION(BlueprintPure, Category = "Skills")
+	USkillSystemComponent* GetSkillSystemComponent() { return SkillSystemComponent; }
 };
