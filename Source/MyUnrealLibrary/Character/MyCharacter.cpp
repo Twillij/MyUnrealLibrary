@@ -1,5 +1,5 @@
 #include "MyCharacter.h"
-#include "CharacterAttributeSet.h"
+#include "../Ability/CharacterAttributeSet.h"
 
 #include "AbilitySystemComponent.h"
 
@@ -9,11 +9,20 @@ AMyCharacter::AMyCharacter()
 	CharacterAttributeSet = CreateDefaultSubobject<UCharacterAttributeSet>("CharacterAttributeSet");
 }
 
-void AMyCharacter::GainAbility(TSubclassOf<UGameplayAbility> Ability, int AbilityLevel)
+void AMyCharacter::LearnAbility(TSubclassOf<UGameplayAbility> Ability, int AbilityLevel)
 {
 	if (!AbilitySystemComponent)
 		return;
 
 	AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, AbilityLevel, -1, this));
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+}
+
+void AMyCharacter::ForgetAbility(TSubclassOf<UGameplayAbility> Ability)
+{
+	if (!AbilitySystemComponent)
+		return;
+
+	FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromClass(Ability);
+	AbilitySystemComponent->ClearAbility(Spec->Handle);
 }

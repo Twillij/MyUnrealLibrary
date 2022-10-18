@@ -22,6 +22,14 @@ public:
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Level);
 
 	UPROPERTY(BlueprintReadOnly)
+	FGameplayAttributeData JobPoints;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, JobPoints);
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayAttributeData SkillPoints;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, SkillPoints);
+
+	UPROPERTY(BlueprintReadOnly)
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Health);
 

@@ -4,6 +4,12 @@
 #include "MyUnrealLibrary.generated.h"
 
 UENUM(BlueprintType)
+enum class EAbilityInputID : uint8
+{
+	None,
+};
+
+UENUM(BlueprintType)
 enum class EQuestState : uint8
 {
 	Locked,

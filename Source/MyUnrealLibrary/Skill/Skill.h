@@ -33,7 +33,7 @@ public:
 	int SkillPointsCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
-	TArray<TSubclassOf<USkill>> PrerequisiteSkills;
+	TArray<FName> PrerequisiteSkills;
 
 protected:
 	bool bSkillUnlocked = false;
@@ -52,8 +52,8 @@ public:
 	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	bool CanCharacterUnlockSkill(APlayableCharacter* Character);
 	
-	void SetSkillUnlocked(bool bUnlocked, bool& bSuccess);
-	void SetSkillEnabled(bool bEnabled, bool& bSuccess);
+	bool SetSkillUnlocked(bool bUnlocked);
+	bool SetSkillEnabled(bool bEnabled);
 
 	// To do: OnSkillEnabled... BP Event, BP Native, or Delegate?
 };

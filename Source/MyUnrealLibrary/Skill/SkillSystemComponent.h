@@ -30,10 +30,19 @@ public:
 	TArray<USkill*> GetAllSkills() { return Skills; }
 
 	UFUNCTION(BlueprintPure)
-	USkill* GetSkill(FName SkillID);
+	TArray<USkill*> GetUnlockedSkills();
+
+	UFUNCTION(BlueprintPure)
+	USkill* GetSkillByClass(TSubclassOf<USkill> SkillClass, bool bExactMatching);
+
+	UFUNCTION(BlueprintPure)
+	USkill* GetSkillByID(FName SkillID);
 
 	UFUNCTION(BlueprintPure)
 	APlayableCharacter* GetOwningCharacter();
+
+	UFUNCTION(BlueprintPure)
+	bool HasPrerequisiteSkills(TArray<FName> PrereqSkills);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkillEnabled(FName SkillID, bool bEnabled);

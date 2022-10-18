@@ -1,9 +1,46 @@
 #include "SkillSystemComponent.h"
 #include "Skill.h"
+#include "../Ability/CharacterAttributeSet.h"
 #include "../Character/PlayableCharacter.h"
-#include "../Character/CharacterAttributeSet.h"
 
-USkill* USkillSystemComponent::GetSkill(FName SkillID)
+TArray<USkill*> USkillSystemComponent::GetUnlockedSkills()
+{
+	TArray<USkill*> UnlockedSkills;
+
+	for (int i = 0; i < Skills.Num(); ++i)
+	{
+		if (Skills[i]->IsSkillUnlocked())
+		{
+			UnlockedSkills.Add(Skills[i]);
+		}
+	}
+
+	return UnlockedSkills;
+}
+
+USkill* USkillSystemComponent::GetSkillByClass(TSubclassOf<USkill> SkillClass, bool bExactMatching)
+{
+	if (bExactMatching)
+	{
+		for (int i = 0; i < Skills.Num(); ++i)
+		{
+			if (Skills[i]->GetClass() == SkillClass)
+				return Skills[i];
+		}
+	}
+	else
+	{
+		for (int i = 0; i < Skills.Num(); ++i)
+		{
+			if (Skills[i]-IsA(SkillClass))
+				return Skills[i];
+		}
+	}
+	
+	return nullptr;
+}
+
+USkill* USkillSystemComponent::GetSkillByID(FName SkillID)
 {
 	for (int i = 0; i < Skills.Num(); ++i)
 	{
@@ -21,15 +58,41 @@ APlayableCharacter* USkillSystemComponent::GetOwningCharacter()
 	return Cast<APlayableCharacter>(GetOwner());
 }
 
+bool USkillSystemComponent::HasPrerequisiteSkills(TArray<FName> PrereqSkills)
+{
+	TArray<USkill*> UnlockedSkills = GetUnlockedSkills();
+
+	for (int i = 0; i < PrereqSkills.Num(); ++i)
+	{
+		bool bFound = false;
+
+		for (int j = 0; j < UnlockedSkills.Num(); ++i)
+		{
+			if (UnlockedSkills[i]->SkillID == PrereqSkills[i])
+			{
+				bFound = true;
+				break;
+			}
+		}
+
+		if (!bFound)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void USkillSystemComponent::SetSkillEnabled(FName SkillID, bool bEnabled)
 {
-	USkill* Skill = GetSkill(SkillID);
+	USkill* Skill = GetSkillByID(SkillID);
 
 	if (!Skill)
 		return;
 
-	bool bSuccess;
-	Skill->SetSkillEnabled(bEnabled, bSuccess);
+	// To do: perhaps refactor the bool getter
+	bool bSuccess = Skill->SetSkillEnabled(bEnabled);
 
 	if (!bSuccess)
 		return;
@@ -41,11 +104,11 @@ void USkillSystemComponent::SetSkillEnabled(FName SkillID, bool bEnabled)
 
 	if (bEnabled)
 	{
-		Character->GainAbility(Skill->AbilityClass, Character->GetCharacterAttributeSet()->GetLevel());
+		Character->LearnAbility(Skill->AbilityClass, Character->GetCharacterAttributeSet()->GetLevel());
 	}
 	else
 	{
-		// To do: lose ability
+		Character->ForgetAbility(Skill->AbilityClass);
 	}
 
 	OnSkillEnabledStateChanged.Broadcast(Skill, bEnabled);

@@ -31,5 +31,8 @@ public:
 	UCharacterAttributeSet* GetCharacterAttributeSet() { return CharacterAttributeSet; }
 	
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
-	virtual void GainAbility(TSubclassOf<UGameplayAbility> Ability, int AbilityLevel);
+	virtual void LearnAbility(TSubclassOf<UGameplayAbility> Ability, int AbilityLevel);
+
+	UFUNCTION(BlueprintCallable, Category = "Abilities")
+	virtual void ForgetAbility(TSubclassOf<UGameplayAbility> Ability);
 };
