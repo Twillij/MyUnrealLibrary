@@ -18,25 +18,14 @@ TArray<USkill*> USkillSystemComponent::GetUnlockedSkills()
 	return UnlockedSkills;
 }
 
-USkill* USkillSystemComponent::GetSkillByClass(TSubclassOf<USkill> SkillClass, bool bExactMatching)
+USkill* USkillSystemComponent::GetSkillByClass(TSubclassOf<USkill> SkillClass)
 {
-	if (bExactMatching)
+	for (int i = 0; i < Skills.Num(); ++i)
 	{
-		for (int i = 0; i < Skills.Num(); ++i)
-		{
-			if (Skills[i]->GetClass() == SkillClass)
-				return Skills[i];
-		}
+		if (Skills[i]->GetClass() == SkillClass)
+			return Skills[i];
 	}
-	else
-	{
-		for (int i = 0; i < Skills.Num(); ++i)
-		{
-			if (Skills[i]-IsA(SkillClass))
-				return Skills[i];
-		}
-	}
-	
+
 	return nullptr;
 }
 
@@ -58,8 +47,12 @@ APlayableCharacter* USkillSystemComponent::GetOwningCharacter()
 	return Cast<APlayableCharacter>(GetOwner());
 }
 
-bool USkillSystemComponent::HasPrerequisiteSkills(TArray<FName> PrereqSkills)
+bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* InSkill)
 {
+	if (!InSkill)
+		return false;
+
+	TArray<FName> PrereqSkills = InSkill->PrerequisiteSkillIDs;
 	TArray<USkill*> UnlockedSkills = GetUnlockedSkills();
 
 	for (int i = 0; i < PrereqSkills.Num(); ++i)

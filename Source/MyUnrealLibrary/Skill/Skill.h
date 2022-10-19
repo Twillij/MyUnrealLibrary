@@ -33,7 +33,7 @@ public:
 	int SkillPointsCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
-	TArray<FName> PrerequisiteSkills;
+	TArray<FName> PrerequisiteSkillIDs;
 
 protected:
 	bool bSkillUnlocked = false;

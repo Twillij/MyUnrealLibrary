@@ -44,7 +44,7 @@ bool USkill::CanCharacterUnlockSkill_Implementation(APlayableCharacter* Characte
 		return false;
 	}
 
-	if (!SkillSysComp->HasPrerequisiteSkills(PrerequisiteSkills))
+	if (!SkillSysComp->HasUnlockedPrerequisiteSkills(this))
 	{
 		return false;
 	}

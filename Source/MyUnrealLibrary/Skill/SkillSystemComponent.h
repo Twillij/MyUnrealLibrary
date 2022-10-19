@@ -33,7 +33,8 @@ public:
 	TArray<USkill*> GetUnlockedSkills();
 
 	UFUNCTION(BlueprintPure)
-	USkill* GetSkillByClass(TSubclassOf<USkill> SkillClass, bool bExactMatching);
+	// Returns the first skill in the array that has the exact matching class.
+	USkill* GetSkillByClass(TSubclassOf<USkill> SkillClass);
 
 	UFUNCTION(BlueprintPure)
 	USkill* GetSkillByID(FName SkillID);
@@ -42,7 +43,7 @@ public:
 	APlayableCharacter* GetOwningCharacter();
 
 	UFUNCTION(BlueprintPure)
-	bool HasPrerequisiteSkills(TArray<FName> PrereqSkills);
+	bool HasUnlockedPrerequisiteSkills(USkill* InSkill);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkillEnabled(FName SkillID, bool bEnabled);
