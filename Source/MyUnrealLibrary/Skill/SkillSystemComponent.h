@@ -43,7 +43,12 @@ public:
 	APlayableCharacter* GetOwningCharacter();
 
 	UFUNCTION(BlueprintPure)
-	bool HasUnlockedPrerequisiteSkills(USkill* InSkill);
+	bool CanPaySkillUnlockCost(USkill* Skill);
+
+	UFUNCTION(BlueprintPure)
+	bool HasUnlockedPrerequisiteSkills(USkill* Skill);
+
+	void UnlockSkill(USkill* InSkill);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkillEnabled(FName SkillID, bool bEnabled);

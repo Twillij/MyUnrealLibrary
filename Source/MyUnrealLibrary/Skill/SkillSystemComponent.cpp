@@ -47,6 +47,23 @@ APlayableCharacter* USkillSystemComponent::GetOwningCharacter()
 	return Cast<APlayableCharacter>(GetOwner());
 }
 
+bool USkillSystemComponent::CanPaySkillUnlockCost(USkill* Skill)
+{
+	UCharacterAttributeSet* AttributeSet = GetOwningCharacter()->GetCharacterAttributeSet();
+	USkillSystemComponent* SkillSysComp = Skill->GetSkillSystemComponent();
+
+	if (!AttributeSet || !SkillSysComp)
+		return false;
+
+	if (AttributeSet->SkillPoints.GetBaseValue() < Skill->SkillPointsCost)
+		return false;
+
+	if (!SkillSysComp->HasUnlockedPrerequisiteSkills(Skill))
+		return false;
+
+	return true;
+}
+
 bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* InSkill)
 {
 	if (!InSkill)
@@ -75,6 +92,20 @@ bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* InSkill)
 	}
 
 	return true;
+}
+
+void USkillSystemComponent::UnlockSkill(USkill* Skill)
+{
+	if (!Skill || Skill->GetSkillSystemComponent() != this || Skill->IsSkillUnlocked())
+		return;
+
+	// To do: fix this.
+	if (CanPaySkillUnlockCost(Skill))
+	{
+		
+	}
+
+	GetOwningCharacter();
 }
 
 void USkillSystemComponent::SetSkillEnabled(FName SkillID, bool bEnabled)

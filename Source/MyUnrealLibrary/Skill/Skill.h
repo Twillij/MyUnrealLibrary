@@ -27,9 +27,6 @@ public:
 	TSubclassOf<UGameplayAbility> AbilityClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements", meta = (ClampMin = "0"))
-	int JobPointsCost;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements", meta = (ClampMin = "0"))
 	int SkillPointsCost;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
@@ -49,8 +46,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	USkillSystemComponent* GetSkillSystemComponent();
 
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
-	bool CanCharacterUnlockSkill(APlayableCharacter* Character);
+	//UFUNCTION(BlueprintPure, BlueprintNativeEvent)
+	bool CanSkillBeUnlocked() { return false; }
 	
 	bool SetSkillUnlocked(bool bUnlocked);
 	bool SetSkillEnabled(bool bEnabled);

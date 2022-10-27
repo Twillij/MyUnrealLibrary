@@ -29,25 +29,3 @@ bool USkill::SetSkillEnabled(bool bEnabled)
 	bSkillEnabled = bEnabled;
 	return true;
 }
-
-bool USkill::CanCharacterUnlockSkill_Implementation(APlayableCharacter* Character)
-{
-	UCharacterAttributeSet* AttributeSet = Character->GetCharacterAttributeSet();
-	USkillSystemComponent* SkillSysComp = GetSkillSystemComponent();
-
-	if (!AttributeSet || !SkillSysComp)
-		return false;
-
-	if (AttributeSet->JobPoints.GetBaseValue() < JobPointsCost ||
-		AttributeSet->SkillPoints.GetBaseValue() < SkillPointsCost)
-	{
-		return false;
-	}
-
-	if (!SkillSysComp->HasUnlockedPrerequisiteSkills(this))
-	{
-		return false;
-	}
-
-	return true;
-}
