@@ -23,7 +23,9 @@ USkill* USkillSystemComponent::GetSkillByClass(TSubclassOf<USkill> SkillClass)
 	for (int i = 0; i < Skills.Num(); ++i)
 	{
 		if (Skills[i]->GetClass() == SkillClass)
+		{
 			return Skills[i];
+		}	
 	}
 
 	return nullptr;
@@ -44,32 +46,50 @@ USkill* USkillSystemComponent::GetSkillByID(FName SkillID)
 
 APlayableCharacter* USkillSystemComponent::GetOwningCharacter()
 {
-	return Cast<APlayableCharacter>(GetOwner());
+	if (!OwningCharacter)
+		OwningCharacter = Cast<APlayableCharacter>(GetOwner());
+	
+	return OwningCharacter;
 }
 
-bool USkillSystemComponent::CanPaySkillUnlockCost(USkill* Skill)
+UCharacterAttributeSet* USkillSystemComponent::GetOwningCharacterAttributeSet()
 {
-	UCharacterAttributeSet* AttributeSet = GetOwningCharacter()->GetCharacterAttributeSet();
-	USkillSystemComponent* SkillSysComp = Skill->GetSkillSystemComponent();
+	APlayableCharacter* Character = GetOwningCharacter();
 
-	if (!AttributeSet || !SkillSysComp)
+	if (Character)
+		return Character->GetCharacterAttributeSet();
+	
+	return nullptr;
+}
+
+bool USkillSystemComponent::CanUnlockSkill(USkill* Skill)
+{
+	if (!Skill)
 		return false;
 
-	if (AttributeSet->SkillPoints.GetBaseValue() < Skill->SkillPointsCost)
+	UCharacterAttributeSet* AttributeSet = GetOwningCharacterAttributeSet();
+
+	if (!AttributeSet)
 		return false;
 
-	if (!SkillSysComp->HasUnlockedPrerequisiteSkills(Skill))
+	if (AttributeSet->SkillPoints.GetBaseValue() < Skill->GetUnlockCostValue(ESkillUnlockCostType::SkillPoints))
+		return false;
+
+	if (AttributeSet->JobPoints.GetBaseValue() < Skill->GetUnlockCostValue(ESkillUnlockCostType::JobPoints))
+		return false;
+
+	if (!HasUnlockedPrerequisiteSkills(Skill))
 		return false;
 
 	return true;
 }
 
-bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* InSkill)
+bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* Skill)
 {
-	if (!InSkill)
+	if (!Skill)
 		return false;
 
-	TArray<FName> PrereqSkills = InSkill->PrerequisiteSkillIDs;
+	TArray<FName> PrereqSkills = Skill->PrerequisiteSkillIDs;
 	TArray<USkill*> UnlockedSkills = GetUnlockedSkills();
 
 	for (int i = 0; i < PrereqSkills.Num(); ++i)
@@ -94,18 +114,24 @@ bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* InSkill)
 	return true;
 }
 
-void USkillSystemComponent::UnlockSkill(USkill* Skill)
+void USkillSystemComponent::UnlockSkill(USkill* Skill, bool bCheckEligibility)
 {
 	if (!Skill || Skill->GetSkillSystemComponent() != this || Skill->IsSkillUnlocked())
 		return;
 
-	// To do: fix this.
-	if (CanPaySkillUnlockCost(Skill))
+	if (bCheckEligibility)
 	{
-		
+		if (!CanUnlockSkill(Skill))
+			return;
 	}
 
-	GetOwningCharacter();
+	UCharacterAttributeSet* AttributeSet = GetOwningCharacterAttributeSet();
+
+	if (!AttributeSet)
+		return;
+
+	AttributeSet->SetSkillPoints(AttributeSet->SkillPoints.GetBaseValue() - Skill->GetUnlockCostValue(ESkillUnlockCostType::SkillPoints));
+	AttributeSet->SetJobPoints(AttributeSet->JobPoints.GetBaseValue() - Skill->GetUnlockCostValue(ESkillUnlockCostType::JobPoints));
 }
 
 void USkillSystemComponent::SetSkillEnabled(FName SkillID, bool bEnabled)

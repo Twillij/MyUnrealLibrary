@@ -8,6 +8,26 @@ class APlayableCharacter;
 class UGameplayAbility;
 class USkillSystemComponent;
 
+UENUM(BlueprintType)
+enum class ESkillUnlockCostType : uint8
+{
+	SkillPoints,
+	JobPoints
+};
+
+USTRUCT(BlueprintType)
+struct FSkillUnlockCost
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESkillUnlockCostType CostType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
+	float CostValue;
+};
+
 UCLASS()
 class MYUNREALLIBRARY_API USkill : public UDataObject
 {
@@ -26,8 +46,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UGameplayAbility> AbilityClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements", meta = (ClampMin = "0"))
-	int SkillPointsCost;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
+	TArray<FSkillUnlockCost> SkillUnlockCosts;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
 	TArray<FName> PrerequisiteSkillIDs;
@@ -45,6 +65,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	USkillSystemComponent* GetSkillSystemComponent();
+
+	UFUNCTION(BlueprintPure)
+	float GetUnlockCostValue(ESkillUnlockCostType CostType);
 
 	//UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	bool CanSkillBeUnlocked() { return false; }

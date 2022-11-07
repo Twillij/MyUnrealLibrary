@@ -2,5 +2,4 @@
 
 UTestSkill::UTestSkill()
 {
-	Costs.Add(0);
 }

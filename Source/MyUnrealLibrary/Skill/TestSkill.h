@@ -15,11 +15,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements", meta = (ClampMin = "0"))
 	int JobPointsCost;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements", meta = (ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
 	bool bAlternativeCost;
 
-	UPROPERTY(EditAnywhere)
-	TArray<uint32> Costs;
+
 
 public:
 	// To do: overrides
