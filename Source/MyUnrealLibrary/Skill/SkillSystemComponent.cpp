@@ -62,7 +62,7 @@ UCharacterAttributeSet* USkillSystemComponent::GetOwningCharacterAttributeSet()
 	return nullptr;
 }
 
-bool USkillSystemComponent::CanUnlockSkill(USkill* Skill)
+bool USkillSystemComponent::CanUnlockSkill_Implementation(USkill* Skill)
 {
 	if (!Skill)
 		return false;

@@ -55,7 +55,7 @@ public:
 	// Returns the attribute set of GetOwningCharacter().
 	UCharacterAttributeSet* GetOwningCharacterAttributeSet();
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	// Returns true if the owning character is eligible to unlock the given skill.
 	bool CanUnlockSkill(USkill* Skill);
 
@@ -63,6 +63,7 @@ public:
 	// Returns true if the owning character has unlocked all of the prerequisites of the given skill.
 	bool HasUnlockedPrerequisiteSkills(USkill* Skill);
 
+	UFUNCTION(BlueprintCallable)
 	// Sets the skill as unlocked and grants the owning character the associated ability with the skill.
 	void UnlockSkill(USkill* Skill, bool bCheckEligibility = true);
 
