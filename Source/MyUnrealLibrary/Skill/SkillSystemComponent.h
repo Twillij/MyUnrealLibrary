@@ -7,8 +7,6 @@
 class APlayableCharacter;
 class USkill;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillStateChanged, USkill*, Skill, bool, bNewState);
-
 UCLASS()
 class MYUNREALLIBRARY_API USkillSystemComponent : public UActorComponent
 {
@@ -19,16 +17,10 @@ public:
 	// An array of skill classes that gets instantiated on BeginPlay
 	TArray<TSubclassOf<USkill>> SkillSet;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnSkillStateChanged OnSkillEnabledStateChanged;
-
 protected:
 	UPROPERTY()
 	// An array of all the instantiated skills
 	TArray<USkill*> Skills;
-
-	// Cached reference to the owning character of this component
-	APlayableCharacter* OwningCharacter;
 
 public:
 	UFUNCTION(BlueprintPure)
@@ -48,27 +40,37 @@ public:
 	USkill* GetSkillByID(FName SkillID);
 
 	UFUNCTION(BlueprintPure)
-	// Returns the cached reference of the owning character, or the cast result of this component's outer.
+	// Returns the cast result of this component's owner.
 	APlayableCharacter* GetOwningCharacter();
 
 	UFUNCTION(BlueprintPure)
 	// Returns the attribute set of GetOwningCharacter().
 	UCharacterAttributeSet* GetOwningCharacterAttributeSet();
 
-	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
-	// Returns true if the owning character is eligible to unlock the given skill.
-	bool CanUnlockSkill(USkill* Skill);
-
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "Skill Unlocking")
 	// Returns true if the owning character has unlocked all of the prerequisites of the given skill.
 	bool HasUnlockedPrerequisiteSkills(USkill* Skill);
 
-	UFUNCTION(BlueprintCallable)
-	// Sets the skill as unlocked and grants the owning character the associated ability with the skill.
-	void UnlockSkill(USkill* Skill, bool bCheckEligibility = true);
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent, Category = "Skill Unlocking")
+	// A native function that is meant to be overridden in the derived classes.
+	// Return should be true when the conditions are fulfilled.
+	// Default implementation always returns true.
+	bool CheckAdditionalUnlockConditions(USkill* Skill);
+
+	UFUNCTION(BlueprintPure, Category = "Skill Unlocking")
+	// Returns true if the owning character is eligible to unlock the given skill.
+	bool CanUnlockSkill(USkill* Skill);
+
+	UFUNCTION(BlueprintCallable, Category = "Skill Unlocking")
+	// To do: Comment
+	bool TryUnlockSkill(USkill* Skill, bool bAutoEnable = true);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkillEnabled(FName SkillID, bool bEnabled);
+
+	void EnableSkill(USkill* Skill);
+
+	void DisableSkill(USkill* Skill);
 
 protected:
 	virtual void BeginPlay() override;

@@ -12,15 +12,9 @@ class MYUNREALLIBRARY_API UTestSkill : public USkill
 public:
 	UTestSkill();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements", meta = (ClampMin = "0"))
-	int JobPointsCost;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
 	bool bAlternativeCost;
 
-
-
 public:
-	// To do: overrides
-	// CanUnlockSkill, UnlockSkill
+	bool CheckAdditionalUnlockConditions_Implementation() override { return true; }
 };

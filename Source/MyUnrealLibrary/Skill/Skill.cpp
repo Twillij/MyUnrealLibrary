@@ -10,35 +10,54 @@ USkillSystemComponent* USkill::GetSkillSystemComponent()
 	return Cast<USkillSystemComponent>(GetOuter());
 }
 
-float USkill::GetUnlockCostValue(ESkillUnlockCostType CostType)
+APlayableCharacter* USkill::GetOwningCharacter()
 {
-	for (int i = 0; i < SkillUnlockCosts.Num(); ++i)
+	if (!OwningCharacter)
 	{
-		if (SkillUnlockCosts[i].CostType == CostType)
-		{
-			return SkillUnlockCosts[i].CostValue;
-		}
+		USkillSystemComponent* SkillSystemComponent = GetSkillSystemComponent();
+
+		if (SkillSystemComponent)
+			OwningCharacter = SkillSystemComponent->GetOwningCharacter();
 	}
 
-	return 0.0f;
+	return OwningCharacter;
 }
 
-bool USkill::SetSkillUnlocked(bool bUnlocked)
+bool USkill::CanPayUnlockCost_Implementation()
 {
-	// To do: check can pay skill cost
-	// To do: call on skill unlocked
+	APlayableCharacter* Character = GetOwningCharacter();
 
-	bSkillUnlocked = bUnlocked;
+	if (!Character)
+		return false;
+
+	UCharacterAttributeSet* AttributeSet = Character->GetCharacterAttributeSet();
+
+	if (!AttributeSet)
+		return false;
+
+	if (AttributeSet->JobPoints.GetBaseValue() < JobPointsCost)
+		return false;
+
+	if (AttributeSet->SkillPoints.GetBaseValue() < SkillPointsCost)
+		return false;
+
 	return true;
 }
 
-bool USkill::SetSkillEnabled(bool bEnabled)
+bool USkill::CheckAdditionalUnlockConditions_Implementation()
 {
-	if (!AbilityClass || !bSkillUnlocked || bSkillEnabled == bEnabled)
-	{
-		return false;
-	}
+	return true;
+}
 
-	bSkillEnabled = bEnabled;
+bool USkill::TryPayUnlockCost_Implementation()
+{
+	if (!CanPayUnlockCost())
+		return false;
+
+	UCharacterAttributeSet* AttributeSet = GetOwningCharacter()->GetCharacterAttributeSet();
+
+	AttributeSet->SetJobPoints(AttributeSet->JobPoints.GetBaseValue() - JobPointsCost);
+	AttributeSet->SetSkillPoints(AttributeSet->SkillPoints.GetBaseValue() - SkillPointsCost);
+
 	return true;
 }

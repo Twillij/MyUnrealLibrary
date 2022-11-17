@@ -46,10 +46,7 @@ USkill* USkillSystemComponent::GetSkillByID(FName SkillID)
 
 APlayableCharacter* USkillSystemComponent::GetOwningCharacter()
 {
-	if (!OwningCharacter)
-		OwningCharacter = Cast<APlayableCharacter>(GetOwner());
-	
-	return OwningCharacter;
+	return GetOwner<APlayableCharacter>();
 }
 
 UCharacterAttributeSet* USkillSystemComponent::GetOwningCharacterAttributeSet()
@@ -62,23 +59,21 @@ UCharacterAttributeSet* USkillSystemComponent::GetOwningCharacterAttributeSet()
 	return nullptr;
 }
 
-bool USkillSystemComponent::CanUnlockSkill_Implementation(USkill* Skill)
+bool USkillSystemComponent::CanUnlockSkill(USkill* Skill)
 {
-	if (!Skill)
+	if (!Skill || Skill->IsSkillUnlocked())
 		return false;
 
-	UCharacterAttributeSet* AttributeSet = GetOwningCharacterAttributeSet();
-
-	if (!AttributeSet)
-		return false;
-
-	if (AttributeSet->SkillPoints.GetBaseValue() < Skill->GetUnlockCostValue(ESkillUnlockCostType::SkillPoints))
-		return false;
-
-	if (AttributeSet->JobPoints.GetBaseValue() < Skill->GetUnlockCostValue(ESkillUnlockCostType::JobPoints))
+	if (!Skill->CanPayUnlockCost())
 		return false;
 
 	if (!HasUnlockedPrerequisiteSkills(Skill))
+		return false;
+
+	if (!CheckAdditionalUnlockConditions(Skill))
+		return false;
+
+	if (!Skill->CheckAdditionalUnlockConditions())
 		return false;
 
 	return true;
@@ -89,7 +84,7 @@ bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* Skill)
 	if (!Skill)
 		return false;
 
-	TArray<FName> PrereqSkills = Skill->PrerequisiteSkillIDs;
+	auto PrereqSkills = Skill->PrerequisiteSkills;
 	TArray<USkill*> UnlockedSkills = GetUnlockedSkills();
 
 	for (int i = 0; i < PrereqSkills.Num(); ++i)
@@ -98,7 +93,7 @@ bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* Skill)
 
 		for (int j = 0; j < UnlockedSkills.Num(); ++i)
 		{
-			if (UnlockedSkills[i]->SkillID == PrereqSkills[i])
+			if (UnlockedSkills[i]->GetClass() == PrereqSkills[i])
 			{
 				bFound = true;
 				break;
@@ -114,24 +109,28 @@ bool USkillSystemComponent::HasUnlockedPrerequisiteSkills(USkill* Skill)
 	return true;
 }
 
-void USkillSystemComponent::UnlockSkill(USkill* Skill, bool bCheckEligibility)
+bool USkillSystemComponent::CheckAdditionalUnlockConditions_Implementation(USkill* Skill)
 {
-	if (!Skill || Skill->GetSkillSystemComponent() != this || Skill->IsSkillUnlocked())
-		return;
+	return true;
+}
 
-	if (bCheckEligibility)
-	{
-		if (!CanUnlockSkill(Skill))
-			return;
-	}
+bool USkillSystemComponent::TryUnlockSkill(USkill* Skill, bool bAutoEnable)
+{
+	if (!Skill || Skill->GetSkillSystemComponent() != this)
+		return false;
 
-	UCharacterAttributeSet* AttributeSet = GetOwningCharacterAttributeSet();
+	if (!CanUnlockSkill(Skill))
+		return false;
 
-	if (!AttributeSet)
-		return;
+	if (Skill->TryPayUnlockCost())
+		return false;
 
-	AttributeSet->SetSkillPoints(AttributeSet->SkillPoints.GetBaseValue() - Skill->GetUnlockCostValue(ESkillUnlockCostType::SkillPoints));
-	AttributeSet->SetJobPoints(AttributeSet->JobPoints.GetBaseValue() - Skill->GetUnlockCostValue(ESkillUnlockCostType::JobPoints));
+	Skill->bUnlocked = true;
+
+	if (bAutoEnable)
+		SetSkillEnabled(Skill->SkillID, true);
+
+	return true;
 }
 
 void USkillSystemComponent::SetSkillEnabled(FName SkillID, bool bEnabled)
@@ -142,10 +141,7 @@ void USkillSystemComponent::SetSkillEnabled(FName SkillID, bool bEnabled)
 		return;
 
 	// To do: perhaps refactor the bool getter
-	bool bSuccess = Skill->SetSkillEnabled(bEnabled);
-
-	if (!bSuccess)
-		return;
+	//bool bSuccess = Skill->SetSkillEnabled(bEnabled);
 
 	APlayableCharacter* Character = GetOwningCharacter();
 
@@ -160,8 +156,34 @@ void USkillSystemComponent::SetSkillEnabled(FName SkillID, bool bEnabled)
 	{
 		Character->ForgetAbility(Skill->AbilityClass);
 	}
+}
 
-	OnSkillEnabledStateChanged.Broadcast(Skill, bEnabled);
+void USkillSystemComponent::EnableSkill(USkill* Skill)
+{
+	if (!Skill)
+		return;
+
+	APlayableCharacter* Character = GetOwningCharacter();
+
+	if (Character)
+	{
+		Character->LearnAbility(Skill->AbilityClass, Character->GetCharacterAttributeSet()->GetLevel());
+		Skill->bEnabled = true;
+	}
+}
+
+void USkillSystemComponent::DisableSkill(USkill* Skill)
+{
+	if (!Skill)
+		return;
+
+	APlayableCharacter* Character = GetOwningCharacter();
+
+	if (Character)
+	{
+		Character->ForgetAbility(Skill->AbilityClass);
+		Skill->bEnabled = false;
+	}
 }
 
 void USkillSystemComponent::BeginPlay()

@@ -8,26 +8,6 @@ class APlayableCharacter;
 class UGameplayAbility;
 class USkillSystemComponent;
 
-UENUM(BlueprintType)
-enum class ESkillUnlockCostType : uint8
-{
-	SkillPoints,
-	JobPoints
-};
-
-USTRUCT(BlueprintType)
-struct FSkillUnlockCost
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESkillUnlockCostType CostType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"))
-	float CostValue;
-};
-
 UCLASS()
 class MYUNREALLIBRARY_API USkill : public UDataObject
 {
@@ -46,34 +26,49 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UGameplayAbility> AbilityClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
-	TArray<FSkillUnlockCost> SkillUnlockCosts;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"), Category = "Unlock Requirements")
+	float JobPointsCost;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
-	TArray<FName> PrerequisiteSkillIDs;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0"), Category = "Unlock Requirements")
+	float SkillPointsCost;
+
+	UPROPERTY(EditAnywhere, Category = "Unlock Requirements")
+	TArray<TSubclassOf<USkill>> PrerequisiteSkills;
+
+	UPROPERTY(BlueprintReadOnly)
+	// Whether this skill is currently unlocked for the owning character
+	// Note: Try to avoid modifying this value directly. Use TryUnlockSkill() from the SkillSystemComponent instead.
+	bool bUnlocked = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	// Whether this skill is currently enabled for the owning character
+	// Note: Try to avoid modifying this value directly. Use EnableSkill() / DisableSkill() from the SkillSystemComponent instead.
+	bool bEnabled = false;
 
 protected:
-	bool bSkillUnlocked = false;
-	bool bSkillEnabled = false;
+	// Cached pointer to the character which owns this skill
+	APlayableCharacter* OwningCharacter;
 
 public:
 	UFUNCTION(BlueprintPure)
-	bool IsSkillUnlocked() { return bSkillUnlocked; }
-
-	UFUNCTION(BlueprintPure)
-	bool IsSkillEnabled() { return bSkillEnabled; }
-
-	UFUNCTION(BlueprintPure)
+	// Returns the skill system component that owns this skill.
 	USkillSystemComponent* GetSkillSystemComponent();
 
 	UFUNCTION(BlueprintPure)
-	float GetUnlockCostValue(ESkillUnlockCostType CostType);
+	// Returns the character which owns this skill.
+	APlayableCharacter* GetOwningCharacter();
 
-	//UFUNCTION(BlueprintPure, BlueprintNativeEvent)
-	bool CanSkillBeUnlocked() { return false; }
-	
-	bool SetSkillUnlocked(bool bUnlocked);
-	bool SetSkillEnabled(bool bEnabled);
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
+	// Returns true if the owning character can pay the unlock cost of this skill.
+	bool CanPayUnlockCost();
 
-	// To do: OnSkillEnabled... BP Event, BP Native, or Delegate?
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
+	// A native function that is meant to be overridden in the derived classes.
+	// Return should be true when the conditions are fulfilled.
+	// Default implementation always returns true.
+	bool CheckAdditionalUnlockConditions();
+
+	UFUNCTION(BlueprintNativeEvent)
+	// Returns true if the owning character successfully paid for the unlock cost of this skill.
+	bool TryPayUnlockCost();
 };
