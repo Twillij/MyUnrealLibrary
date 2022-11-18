@@ -21,17 +21,17 @@ enum class EQuestState : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FCharacterData
+struct FCharacterSaveData
 {
 	GENERATED_BODY()
 
 public:
 	FName CharacterID;
-	TArray<FSkillData> SkillSetData;
+	TArray<FSkillSaveData> SkillSaveData;
 };
 
 USTRUCT(BlueprintType)
-struct FSkillData
+struct FSkillSaveData
 {
 	GENERATED_BODY()
 
