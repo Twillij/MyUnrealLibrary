@@ -33,6 +33,7 @@ public:
 	float SkillPointsCost;
 
 	UPROPERTY(EditAnywhere, Category = "Unlock Requirements")
+	// Other skills that need to be unlocked before this skill can be unlocked
 	TArray<TSubclassOf<USkill>> PrerequisiteSkills;
 
 	UPROPERTY(BlueprintReadOnly)

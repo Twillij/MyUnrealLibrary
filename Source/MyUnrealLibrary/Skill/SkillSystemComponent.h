@@ -66,10 +66,11 @@ public:
 	bool TryUnlockSkill(USkill* Skill, bool bAutoEnable = true);
 
 	UFUNCTION(BlueprintCallable)
-	void SetSkillEnabled(FName SkillID, bool bEnabled);
-
+	// Enables the given skill for the owning character.
 	void EnableSkill(USkill* Skill);
 
+	UFUNCTION(BlueprintCallable)
+	// Disables the given skill for the owning character.
 	void DisableSkill(USkill* Skill);
 
 protected:

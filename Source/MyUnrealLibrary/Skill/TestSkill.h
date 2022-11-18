@@ -10,10 +10,7 @@ class MYUNREALLIBRARY_API UTestSkill : public USkill
 	GENERATED_BODY()
 
 public:
-	UTestSkill();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unlock Requirements")
-	bool bAlternativeCost;
+	UTestSkill() {}
 
 public:
 	bool CheckAdditionalUnlockConditions_Implementation() override { return true; }
